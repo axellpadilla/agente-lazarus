@@ -4,9 +4,5 @@ openai>=1.0.0
 pandas>=2.0.0
 openpyxl>=3.1.0
 
-# Vector storage and embeddings
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
-
 # Utilities
 python-dotenv>=1.0.0

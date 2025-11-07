@@ -11,6 +11,9 @@ import os
 class FAQKnowledgeBase:
     """Manages FAQ knowledge base from Excel file"""
     
+    # Common Spanish punctuation to strip from words
+    PUNCTUATION = '¿?.,;:'
+    
     def __init__(self, excel_file: str = "faq_grupo_lazarus.xlsx"):
         """
         Initialize the knowledge base
@@ -71,7 +74,8 @@ class FAQKnowledgeBase:
         }
         
         # Clean query
-        query_words = [w.strip('¿?.,;:') for w in query_lower.split() if w.strip('¿?.,;:') not in stopwords]
+        query_words = [w.strip(self.PUNCTUATION) for w in query_lower.split() 
+                      if w.strip(self.PUNCTUATION) not in stopwords]
         # Apply mappings
         query_words = [word_mappings.get(w, w) for w in query_words]
         
@@ -81,7 +85,8 @@ class FAQKnowledgeBase:
             categoria_lower = faq['categoria'].lower()
             
             # Clean FAQ question
-            pregunta_words = [w.strip('¿?.,;:') for w in pregunta_lower.split() if w.strip('¿?.,;:') not in stopwords]
+            pregunta_words = [w.strip(self.PUNCTUATION) for w in pregunta_lower.split() 
+                            if w.strip(self.PUNCTUATION) not in stopwords]
             
             score = 0
             
