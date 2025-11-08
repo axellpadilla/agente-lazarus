@@ -26,7 +26,8 @@
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "installOhMyZsh": true
-    }
+    },
+    "ghcr.io/devcontainers/features/git-lfs:1": {}
   },
   "forwardPorts": [],
   "remoteUser": "vscode"
