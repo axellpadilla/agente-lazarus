@@ -1,0 +1,39 @@
+[project]
+name = "lazarus-apps"
+version = "0.1.0"
+description = "Lazarus Chatbot with UI and CLI interfaces"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+dependencies = [
+    "lazarus-core",
+    "lazarus-kb",
+    "streamlit>=1.40.0",
+    "python-dotenv>=1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6.0",
+    "pylint>=3.2.0",
+    "ipykernel>=6.29.0",
+    "jupyterlab>=4.2.0",
+]
+
+[tool.uv.sources]
+lazarus-core = { workspace = true }
+lazarus-kb = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "packages/lazarus-core",
+    "packages/lazarus-kb",
+]
+exclude = [
+    "packages/*/data",
+    "packages/*/tests",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"

@@ -1,0 +1,27 @@
+[project]
+name = "lazarus-core"
+version = "0.1.0"
+description = "RAG Chatbot core for Grupo Lazarus using DSPy"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+dependencies = [
+    "dspy-ai>=2.4.0",
+    "openai>=1.0.0",
+    "litellm>=1.35.0",
+    "python-dotenv>=1.0.0",
+    "lazarus-kb",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6.0",
+    "pylint>=3.2.0",
+]
+
+[tool.uv.sources]
+lazarus-kb = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"

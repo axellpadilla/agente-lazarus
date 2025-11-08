@@ -11,16 +11,19 @@ import os
 class FAQKnowledgeBase:
     """Gestiona la base de conocimiento de FAQ desde archivo CSV"""
 
-    # Puntuación común en español para eliminar de las palabras
-    PUNCTUATION = '¿?.,;:'
+    # Caracteres de puntuación en español a remover de las palabras
+    PUNCTUATION = '?.,;:'
 
-    def __init__(self, excel_file: str = "data_limpia/faq_limpio.csv"):
+    def __init__(self, excel_file: Optional[str] = None):
         """
         Inicializar la base de conocimiento
 
         Args:
             excel_file: Ruta al archivo CSV que contiene los datos de FAQ
         """
+        if excel_file is None:
+            excel_file = "./data_limpia/faq_limpio.csv"
+        
         self.excel_file = excel_file
         self.faqs: List[Dict[str, str]] = []
         self.load_data()
@@ -34,7 +37,7 @@ class FAQKnowledgeBase:
         try:
             df = pd.read_csv(self.excel_file)
 
-            # Convertir DataFrame a lista de diccionarios
+            # Convertir DataFrame a lista de diccionarios de preguntas-respuestas
             for _, row in df.iterrows():
                 self.faqs.append({
                     'pregunta': str(row['pregunta']),
@@ -61,12 +64,12 @@ class FAQKnowledgeBase:
         best_match = None
         best_score = 0
 
-        # Eliminar palabras vacías comunes y puntuación
+        # Palabras vacías comunes en español a eliminar
         stopwords = {'de', 'la', 'el', 'en', 'y', 'a', 'los', 'las', 'del', 'al',
                      'es', 'un', 'una', 'con', 'por', 'para', 'su', 'sus', 'que', '¿', '?',
                      'están', 'estan', 'como', 'cual', 'cuales'}
 
-        # Mapeos de palabras para mejor coincidencia
+        # Mapeos de sinónimos para mejorar la coincidencia
         word_mappings = {
             'donde': 'ubicad',
             'ubicacion': 'ubicad',
@@ -74,10 +77,10 @@ class FAQKnowledgeBase:
             'direccion': 'ubicad',
         }
 
-        # Limpiar consulta
+        # Procesar consulta eliminando puntuación y stopwords
         query_words = [w.strip(self.PUNCTUATION) for w in query_lower.split()
                        if w.strip(self.PUNCTUATION) not in stopwords]
-        # Aplicar mapeos
+        # Aplicar mapeos de sinónimos
         query_words = [word_mappings.get(w, w) for w in query_words]
 
         for faq in self.faqs:
@@ -85,34 +88,34 @@ class FAQKnowledgeBase:
             respuesta_lower = faq['respuesta'].lower()
             categoria_lower = faq['categoria'].lower()
 
-            # Limpiar pregunta de FAQ
+            # Procesar pregunta FAQ removiendo stopwords y puntuación
             pregunta_words = [w.strip(self.PUNCTUATION) for w in pregunta_lower.split()
                               if w.strip(self.PUNCTUATION) not in stopwords]
 
             score = 0
 
-            # Verificar coincidencias de subcadenas (más flexible)
+            # Evaluar coincidencias parciales de palabras
             for query_word in query_words:
-                # Verificar en pregunta
+                # Verificar coincidencia en pregunta FAQ
                 for pregunta_word in pregunta_words:
                     if query_word in pregunta_word or pregunta_word in query_word:
                         score += 0.4
                     if query_word == pregunta_word:
                         score += 0.2
 
-                # Verificar en categoría
+                # Verificar coincidencia en categoría
                 if query_word in categoria_lower:
                     score += 0.3
 
-                # Verificar en respuesta (menos peso)
+                # Verificar coincidencia en respuesta (peso menor)
                 if query_word in respuesta_lower:
                     score += 0.1
 
-            # Normalizar puntuación
+            # Normalizar la puntuación final
             if len(query_words) > 0:
                 score = score / len(query_words)
 
-                # Bonificación por coincidencia exacta de frase
+                # Bonus si la consulta coincide exactamente con la pregunta o respuesta
                 if query_lower in pregunta_lower or query_lower in respuesta_lower:
                     score += 0.5
 
@@ -123,9 +126,9 @@ class FAQKnowledgeBase:
         return best_match
 
     def get_all_faqs(self) -> List[Dict[str, str]]:
-        """Devolver todas las FAQ"""
+        """Devolver todas las FAQ cargadas"""
         return self.faqs
 
     def get_faqs_by_category(self, category: str) -> List[Dict[str, str]]:
-        """Obtener FAQ filtradas por categoría"""
+        """Obtener todas las FAQ filtradas por categoría"""
         return [faq for faq in self.faqs if faq['categoria'].lower() == category.lower()]

@@ -14,8 +14,6 @@
   - Responsables: (spreadsheet): https://docs.google.com/spreadsheets/d/14Z234SdSEWD3fBGmCkWVkYiJxaIvdUWdpw82KJd0bXc/edit?usp=sharing
 - **Consolidación de responsabilidades:** Asignación de dueños para la gestión de datos clave.
 
-- **Responsable identificado:** Evelyn — Datos maestros de Planificación (reemplazos, factores de conversión, descontinuados).
-
 - **Asignación (tarea):** Completar el borrador de Reglas de Calidad y avanzar con el documento de Gobernanza de Datos para el chatbot de atención al cliente.
 
 ## Contenido y Exactitud

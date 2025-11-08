@@ -1,0 +1,16 @@
+[project]
+name = "lazarus-kb"
+version = "0.1.0"
+description = "Knowledge base module for Lazarus chatbot using FAQ data"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+dependencies = [
+    "pandas>=2.0.0",
+]
+
+[tool.uv.sources]
+
+[build-system]
+requires = ["uv_build>=0.9.8,<0.10.0"]
+build-backend = "uv_build"

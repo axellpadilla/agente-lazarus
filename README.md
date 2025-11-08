@@ -1,21 +1,20 @@
 # Agente Lazarus - Chatbot Inteligente con RAG
 
-Bot conversacional inteligente que utiliza RAG (Retrieval-Augmented Generation) para responder preguntas basadas en una base de conocimientos en formato Excel. Implementado con Python 3.13, DSPy y OpenRouter API.
+Bot conversacional inteligente que utiliza RAG (Retrieval-Augmented Generation) para responder preguntas basadas en una base de conocimientos en formato CSV. Implementado con Python 3.13, DSPy y proveedores de IA compatibles con DSPy.
 
 ## 🚀 Características
 
 - **Python 3.13** con devcontainer configurado
-- **RAG (Retrieval-Augmented Generation)** para búsqueda en base de conocimientos
-- **DSPy** para orquestación de prompts y respuestas
-- **OpenRouter API** para acceso a múltiples modelos de IA (GPT-3.5, GPT-4, Claude, etc.)
-- **Base de conocimientos Excel** (faq_grupo_lazarus.xlsx)
-- **Transferencia inteligente a agente humano** cuando no encuentra respuestas
-- **Modo interactivo** de chat
+- **RAG (Retrieval-Augmented Generation)** con un retriever DSPy que consume la base de conocimientos limpia (`data_limpia/faq_limpio.csv`)
+- **DSPy** para orquestación de prompts y cadenas de razonamiento estructuradas
+- **Proveedores de IA compatibles con DSPy** (OpenAI, Anthropic, etc.) para acceso a modelos de IA
+- **Transferencia inteligente a agente humano** guiada por un módulo DSPy de decisión
+- **Modo interactivo** de chat y script de regresiones rápidas (`ejemplo.py`)
 
 ## 📋 Requisitos
 
 - Python 3.13+
-- OpenRouter API key (opcional para funcionalidad completa)
+- API key de un proveedor compatible con DSPy (opcional para funcionalidad completa)
 
 ## 🛠️ Instalación
 
@@ -23,57 +22,80 @@ Bot conversacional inteligente que utiliza RAG (Retrieval-Augmented Generation) 
 
 1. Abrir el repositorio en VS Code
 2. Cuando se solicite, seleccionar "Reopen in Container"
-3. El contenedor instalará automáticamente todas las dependencias
+3. El contenedor ejecutará automáticamente el script `postcreate.sh` que:
+   - Verifica Python 3.13
+   - Instala `uv` (gestor de paquetes de Astral)
+   - Descarga todas las dependencias
+   - Valida archivos críticos
+   - Ejecuta smoke tests
 
 ### Opción 2: Instalación local
 
 ```bash
-# Instalar dependencias
-pip install -r requirements.txt
+# 1. Instalar uv (si no lo tienes)
+pip install uv
 
-# Copiar archivo de configuración
+# 2. Sincronizar dependencias con uv
+cd /workspaces/agente-lazarous
+uv sync
+
+# 3. Copiar archivo de configuración
 cp .env.example .env
 
-# Editar .env y agregar tu API key de OpenRouter
-# OPENROUTER_API_KEY=tu_api_key_aqui
+# 4. Editar .env y agregar tu API key
+# DSPY_API_KEY=tu_api_key_aqui
+# DSPY_MODEL=openai/gpt-3.5-turbo (o el modelo de tu proveedor)
 ```
 
+**Nota:** El proyecto usa `uv` workspace con dos paquetes locales. El comando `uv sync` instala todo (incluyendo paquetes locales editables) en un único `.venv` compartido.
+
 ## 📖 Uso
+
+**Nota:** Todos los comandos de ejecución deben precederse con `uv run` para asegurar que se use el entorno virtual correcto del workspace. Ejemplo: `uv run python -m lazarus_apps.main`
 
 ### 1. Chatbot Interactivo
 
 ```bash
-python chatbot.py
+uv run python -m lazarus_apps.main
 ```
 
 Esto iniciará una sesión de chat interactiva donde puedes hacer preguntas sobre Grupo Lazarus.
 
-### 2. Ejemplos de Uso
+### 2. UI Streamlit
 
 ```bash
-python ejemplo.py
+uv run streamlit run src/lazarus_apps/ui.py
 ```
 
-Este script ejecuta varios ejemplos que demuestran:
-- Consultas básicas a la base de conocimientos
-- Escenarios de transferencia a agente humano
-- Inspección de la base de conocimientos
-- Uso con diferentes modelos de IA
+Interfaz web interactiva con:
+- Historial de chat
+- Estadísticas de base de conocimientos
+- Expandibles con detalles de respuesta
+- Información sobre transferencias
 
-### 3. Workshop ETL Semana 1 (Parte 2)
+### 4. Tareas de VS Code
+
+El proyecto incluye tareas preconfiguradas en `.vscode/tasks.json` para facilitar el uso:
+
+- **uv-run**: Ejecuta `uv run` con argumentos personalizados (ej: `python ejemplo.py`)
+- **uv-sync**: Ejecuta `uv sync` con argumentos opcionales (ej: `--upgrade`)
+
+Para usarlas: `Ctrl+Shift+P` > "Tasks: Run Task" > Seleccionar tarea > Ingresar argumentos cuando se solicite.
+
+### 4. Workshop ETL Semana 1 (Parte 2)
 
 La carpeta `docs/` contiene el guion completo de la sesión y el cuaderno `notebooks/demo_etl.ipynb` implementa la demo paso a paso:
 
 1. Abre el repositorio en Codespaces (o en tu entorno local con VS Code).
-2. Verifica que el archivo `faq_grupo_lazarus.xlsx` esté disponible en la raíz del proyecto.
+2. Verifica que el archivo bruto `faq_grupo_lazarus.xlsx` esté disponible en la raíz del proyecto.
 3. Ejecuta el notebook `notebooks/demo_etl.ipynb` siguiendo las celdas en orden para cubrir el flujo **Extract → Transform → Load**.
 4. Durante la demo, apóyate en `docs/semana1_parte2_presentacion.md` para los tiempos, discursos sugeridos y momentos clave.
-5. Al finalizar, muestra el archivo `faq_limpio.csv` generado para cerrar el ciclo ETL.
+5. Al finalizar, muestra el archivo `data_limpia/faq_limpio.csv` generado para cerrar el ciclo ETL.
 
-### 4. Uso Programático
+### 5. Uso Programático
 
 ```python
-from chatbot import LazarusChatbot
+from lazarus_core import LazarusChatbot
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
@@ -87,21 +109,58 @@ response = chatbot.answer("¿Cuál es el horario de atención?")
 print(response['answer'])
 ```
 
-## 🗂️ Estructura del Proyecto
+## 🗂️ Estructura del Proyecto (Workspace uv)
 
 ```
-.
-├── .devcontainer/
-│   └── devcontainer.json          # Configuración del devcontainer
-├── chatbot.py                      # Chatbot principal con DSPy
-├── rag_knowledge_base.py           # Sistema RAG para búsqueda en Excel
-├── ejemplo.py                      # Ejemplos de uso
-├── faq_grupo_lazarus.xlsx          # Base de conocimientos (FAQ)
-├── requirements.txt                # Dependencias Python
-├── .env.example                    # Plantilla de configuración
-├── .gitignore                      # Archivos ignorados por git
-└── README.md                       # Este archivo
+agente-lazarous/
+├── pyproject.toml                  # ROOT workspace (define members)
+├── uv.lock                         # Lockfile compartido
+│
+├── packages/                       # Miembros del workspace
+│   ├── lazarus-core/              # Backend: chatbot con DSPy
+│   │   ├── src/lazarus_core/
+│   │   │   ├── __init__.py
+│   │   │   ├── bot.py             # LazarusChatbot (DSPy Module)
+│   │   │   ├── retriever.py       # FAQRetriever
+│   │   │   ├── signatures.py      # DSPy signatures
+│   │   │   ├── structures.py      # ChatResult dataclass
+│   │   │   ├── constants.py       # Constantes
+│   │   │   └── main.py            # Entry point CLI
+│   │   ├── pyproject.toml
+│   │   └── README.md
+│   │
+│   └── lazarus-kb/                # Knowledge base: FAQ
+│       ├── src/lazarus_kb/
+│       │   ├── __init__.py
+│       │   └── knowledge_base.py  # FAQKnowledgeBase (búsqueda)
+│       ├── pyproject.toml
+│       └── README.md
+│
+├── src/lazarus_apps/               # Aplicación raíz (UI + CLI)
+│   ├── __init__.py
+│   ├── main.py                     # CLI interactivo
+│   ├── ui.py                       # UI Streamlit (NUEVA)
+│   └── ...
+│
+├── scripts/                        # Scripts utilitarios
+│   └── etl_malo.py                # ETL: Excel → CSV
+│
+├── data_limpia/                    # Datos FAQ procesados
+│   └── faq_limpio.csv
+│
+├── .devcontainer/                 # Devcontainer config
+├── docs/                          # Documentación
+├── notebooks/                     # Notebooks (demo ETL)
+├── data/                          # Datos originales (Excel)
+├── ejemplo.py                     # Ejemplos de uso
+└── README.md                      # Este archivo
 ```
+
+**Arquitectura:**
+- **lazarus-kb**: Gestiona búsqueda en FAQ (importable por otros proyectos)
+- **lazarus-core**: Orquesta DSPy + retriever (depende de lazarus-kb)
+- **lazarus-apps**: CLI e interfaz Streamlit (depende de lazarus-core)
+- **Un único .venv**: Todos los paquetes en modo editable compartido
 
 ## 🔧 Configuración
 
@@ -110,20 +169,39 @@ print(response['answer'])
 Crear un archivo `.env` con las siguientes variables:
 
 ```bash
-# API Key de OpenRouter (obligatorio para funcionalidad completa)
-OPENROUTER_API_KEY=tu_api_key_aqui
+# API Key del proveedor de IA (obligatorio)
+DSPY_API_KEY=tu_api_key_aqui
 
-# Modelo a utilizar (opcional, default: openai/gpt-3.5-turbo)
-OPENROUTER_CHAT_MODEL=openai/gpt-3.5-turbo
+# Modelo a utilizar en formato DSPy: provider/model-name (obligatorio)
+# Ejemplos:
+#   openai/gpt-3.5-turbo
+#   anthropic/claude-3-haiku-20240307
+#   cohere/command
+#   openrouter/openai/gpt-3.5-turbo
+DSPY_MODEL=openai/gpt-3.5-turbo
+
+# Opcional: URL base personalizada (para gateways, proxies, etc.)
+# DSPY_API_BASE=https://tu-gateway-endpoint/v1
 ```
 
-### Obtener API Key de OpenRouter
+### Obtener API Key
 
-1. Visitar [https://openrouter.ai](https://openrouter.ai)
+El proceso depende de tu proveedor:
+
+**OpenAI:**
+1. Visitar [https://platform.openai.com](https://platform.openai.com)
 2. Crear una cuenta
-3. Ir a [https://openrouter.ai/keys](https://openrouter.ai/keys)
-4. Generar una nueva API key
-5. Copiar la key al archivo `.env`
+3. Ir a API Keys → Create new secret key
+4. Copiar la key a `DSPY_API_KEY`
+
+**Anthropic (Claude):**
+1. Visitar [https://console.anthropic.com](https://console.anthropic.com)
+2. Crear una cuenta
+3. Ir a API Keys
+4. Copiar la key a `DSPY_API_KEY` y usa `DSPY_MODEL=anthropic/claude-3-haiku-20240307`
+
+**Otros proveedores:**
+Consulta la [documentación de DSPy LM](https://dspy.ai/api/models/LM/) para configuración específica.
 
 ## 📊 Base de Conocimientos
 
@@ -133,6 +211,8 @@ El archivo `faq_grupo_lazarus.xlsx` contiene la base de conocimientos con las si
 - **Respuesta**: La respuesta correspondiente
 - **Categoría**: Categoría de la pregunta (Horarios, Soporte, Servicios, etc.)
 
+El archivo se procesa a través del notebook `notebooks/demo_etl.ipynb` para generar `data_limpia/faq_limpio.csv` que es consumido por `lazarus-kb`.
+
 ### Actualizar la Base de Conocimientos
 
 Para agregar nuevas preguntas y respuestas:
@@ -140,14 +220,21 @@ Para agregar nuevas preguntas y respuestas:
 1. Abrir `faq_grupo_lazarus.xlsx` en Excel
 2. Agregar nuevas filas con Pregunta, Respuesta y Categoría
 3. Guardar el archivo
-4. Reiniciar el chatbot
+4. Ejecutar el ETL desde `notebooks/demo_etl.ipynb`
+5. El CSV actualizado se generará en `data_limpia/faq_limpio.csv`
+6. Reiniciar el chatbot para cargar los nuevos datos
 
-## 🤖 Funcionamiento del RAG
+## 🤖 Funcionamiento del RAG + DSPy
 
-1. **Búsqueda**: El usuario hace una pregunta
-2. **Recuperación**: El sistema busca en la base de conocimientos FAQs relacionadas
-3. **Generación**: Si encuentra información relevante, DSPy genera una respuesta contextual
-4. **Transferencia**: Si no encuentra información, simula una transferencia a agente humano
+1. **Recuperación** (`lazarus_kb.FAQKnowledgeBase.search()`): busca en el CSV con matching de palabras clave y manejo de sinónimos.
+
+2. **Adaptación DSPy** (`lazarus_core.retriever.FAQRetriever`): adapta el retriever a `dspy.Module` para entregar pasajes y metadatos.
+
+3. **Generación estructurada** (`lazarus_core.signatures.CustomerServiceSignature` con `dspy.ChainOfThought`): produce saludo, respuesta directa y próxima acción usando el contexto recuperado.
+
+4. **Transferencia inteligente** (`lazarus_core.signatures.TransferDecisionSignature`): decide si escalar a agente humano considerando la respuesta generada.
+
+5. **Fallback**: Sin API key se responde con la FAQ literal, manteniendo el mismo contrato `ChatResult` (backward compatible).
 
 ## 🎯 Ejemplos de Preguntas
 
@@ -172,37 +259,57 @@ Cuando el chatbot no encuentra información relevante en la base de conocimiento
 
 ## 🚀 Modelos Disponibles
 
-OpenRouter soporta múltiples modelos:
+DSPy soporta múltiples proveedores. El usuario especifica el modelo en formato `gateway/provider/model-name`:
 
-- `openai/gpt-3.5-turbo` (Rápido y económico)
-- `openai/gpt-4` (Más preciso)
-- `anthropic/claude-2` (Excelente para conversaciones)
-- `google/palm-2-chat-bison` (Alternativa de Google)
-- Y muchos más...
+- **OpenAI**: `openai/gpt-3.5-turbo`, `openai/gpt-4`, `openai/gpt-4-turbo`
+- **Anthropic**: `anthropic/claude-3-haiku-20240307`, `anthropic/claude-3-sonnet-20240229`
+- **Cohere**: `cohere/command`
+- **OpenRouter**: `openrouter/openai/gpt-3.5-turbo`, `openrouter/anthropic/claude-2`, etc.
+- **Otros**: Consulta [documentación de DSPy LM](https://dspy.ai/api/models/LM/)
+
+Para usar un proveedor específico, establece `DSPY_MODEL` con el formato adecuado y `DSPY_API_KEY` con tu credencial.
 
 ## 🐛 Solución de Problemas
 
+### El devcontainer falla al crearse
+
+- El script `postcreate.sh` verifica automáticamente:
+  - Python 3.13 disponible
+  - `uv` instalado correctamente
+  - Todas las dependencias descargadas
+  - Archivos críticos presentes
+- Si hay error, verifica los logs del devcontainer en la pestaña de "Dev Container" en VS Code
+
 ### El chatbot no puede acceder a la API
 
-- Verificar que `OPENROUTER_API_KEY` esté configurada en `.env`
-- Verificar que la API key sea válida
+- Verificar que `DSPY_API_KEY` y `DSPY_MODEL` estén configuradas en `.env`
+- Verificar que la API key sea válida para el proveedor especificado
+- Si usas un gateway personalizado, asegúrate de que `DSPY_API_BASE` sea correcto
 - El chatbot funcionará en modo fallback sin API key (respuestas directas sin DSPy)
 
 ### No se encuentra el archivo Excel
 
 - Verificar que `faq_grupo_lazarus.xlsx` esté en el directorio raíz
+- El script postcreate advierte si falta este archivo
 - Verificar permisos de lectura del archivo
 
-### Error al instalar dependencias
+### Error al sincronizar dependencias
 
 ```bash
-# Actualizar pip primero
-pip install --upgrade pip
+# Con uv (recomendado)
+uv sync --upgrade
 
-# Instalar dependencias una por una si hay conflictos
-pip install dspy-ai
-pip install pandas openpyxl
+# O si hay problemas, resetear el lock
+rm uv.lock
+uv sync
 ```
+
+### Error de importación en código
+
+Si ves errores como `ModuleNotFoundError: No module named 'chatbot_demo'`:
+- Asegúrate de estar usando imports nuevos: `from lazarus_core import LazarusChatbot`
+- Ejecuta `uv sync` nuevamente para actualizar paquetes editables
+- Reinicia el terminal o el IDE para actualizar la ruta de módulos
 
 ## 📝 Licencia
 
