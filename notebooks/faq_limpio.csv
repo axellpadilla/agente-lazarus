@@ -1,0 +1,15 @@
+pregunta,respuesta,categoria,limpiar,razon_para_la_limpieza_(escenario_de_practica),longitud_pregunta
+¿Qué es ADMIX IM-1?,Es un producto para solucionar problemas de humedad ascendente en paredes.,productos,No,Correctamente formateado.,19
+¿Dónde se encuentra la sede principal de Lazarus?,La Sede Corporativa y Principal está en San Pedro Sula.,ubicaciones,No,Correctamente formateado.,49
+¿Cuál es el horario de atención?,Nuestro horario es Lunes a Viernes 7:30 AM - 4:30 PM; Sábados 8:00 AM - 12:00 PM.,contacto,No,Correctamente formateado.,32
+¿Qué son los aditivos que usamos?,Aditivos químicos especializados para la construcción.,productos,Sí,Inconsistencia de Caso (Pregunta): La pregunta está en minúsculas. Se debe aplicar .str.title() o .str.capitalize() a todas las preguntas para estandarizar.,33
+¿Puedo solicitar crédito para mis compras?,No disponible,servicios,Sí,Valores Nulos (NaN): La respuesta está vacía (NaN). Se debe imputar con 'No Disponible' o 'Revisar Sección de Crédito'.,42
+¿Con qué marca de herrameintas trabajan?,Trabajamos con HILTI y ofrecemos servicio LTS.,productos,Sí,Error de Tipeo/Consistencia: 'herrameintas' debe ser 'herramientas'. 'HILTI' debe ser normalizado a 'Hilti'.,40
+¿Cuáles son los teléfonos de contacto en SPS?,Tel: +504 2570-7750 / Cel: 3391-9803,contacto,Sí,"Consistencia/Formato (Respuesta): Los números de teléfono deben ser estandarizados (ej. solo números, sin espacios, o formato (504) XXXX-XXXX).",45
+¿Qué es TPO?,"Es un sistema de impermeabilización de FireStone que hemos usado en más de 60,000 m².",marcas,No,Correctamente formateado.,12
+¿dónde están en tegucigalpa?,"Complejo de Bodegas El Rincón, Col. 21 de Octubre.",ubicaciones,Sí,Inconsistencia de Caso (Categoría/Pregunta): Categoría en mayúsculas (UBICACIONES). Pregunta en minúsculas.,28
+¿Pueden mantener mis equipos Hilti?,"Sí, ofrecemos el servicio LTS con expertos.",servicios,Sí,Duplicado (Sintáctico): Esta fila es muy similar al registro 12 y podría considerarse duplicada.,35
+¿Quién es el Arq. Milisen Delgado?,Encargada de Acabados del Hotel A Loft (cliente).,testimonios,No,Correctamente formateado.,34
+¿Qué marcas distribuyen además de Hilti?,"Trimble, Reed, NovoMix, Maccaferri, Fiori, y Mirafi (Tencate).",marcas,Sí,Inconsistencia de Formato (Respuesta): Los nombres de las marcas deben ser separados consistentemente (ej. una lista o comas con espacio).,40
+¿Necesito registro para la biblioteca?,No disponible,biblioteca,Sí,Valores Nulos (NaN): Respuesta vacía. Este es un caso de imputación crítico.,38
+¿Dónde se ubica la tienda de Prado Alto?,"10 Ave. 17 Calle S.O., No.171 Ave. Circunvalación, Col. Prado Alto.",ubicaciones,Sí,Inconsistencia de Caso (Categoría): Categoría en mayúsculas (UBICACIONES).,40

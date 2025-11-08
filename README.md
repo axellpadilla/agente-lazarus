@@ -60,7 +60,17 @@ Este script ejecuta varios ejemplos que demuestran:
 - Inspección de la base de conocimientos
 - Uso con diferentes modelos de IA
 
-### 3. Uso Programático
+### 3. Workshop ETL Semana 1 (Parte 2)
+
+La carpeta `docs/` contiene el guion completo de la sesión y el cuaderno `notebooks/demo_etl.ipynb` implementa la demo paso a paso:
+
+1. Abre el repositorio en Codespaces (o en tu entorno local con VS Code).
+2. Verifica que el archivo `faq_grupo_lazarus.xlsx` esté disponible en la raíz del proyecto.
+3. Ejecuta el notebook `notebooks/demo_etl.ipynb` siguiendo las celdas en orden para cubrir el flujo **Extract → Transform → Load**.
+4. Durante la demo, apóyate en `docs/semana1_parte2_presentacion.md` para los tiempos, discursos sugeridos y momentos clave.
+5. Al finalizar, muestra el archivo `faq_limpio.csv` generado para cerrar el ciclo ETL.
+
+### 4. Uso Programático
 
 ```python
 from chatbot import LazarusChatbot
