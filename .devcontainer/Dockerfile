@@ -9,7 +9,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copiar archivos de configuración del proyecto
 COPY pyproject.toml ./
+COPY README.md ./
 COPY src/ ./src/
+COPY packages/ ./packages/
 
 # Crear el entorno virtual y sincronizar dependencias
 RUN uv sync
