@@ -13,15 +13,6 @@ dependencies = [
     "lazarus-kb",
 ]
 
-[dependency-groups]
-dev = [
-    "ruff>=0.6.0",
-    "pylint>=3.2.0",
-]
-
-[tool.uv.sources]
-lazarus-kb = { workspace = true }
-
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]
 build-backend = "uv_build"
