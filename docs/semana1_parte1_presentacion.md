@@ -64,7 +64,7 @@ Se centra en responsabilidades y en mantener contenido vigente:
 
 | id_producto | id_producto_equivalente | factor_numerador | factor_denominador | tipo_registro | fecha_desde | fecha_hasta | notas |
 |-------------:|:------------------------:|------------------:|-------------------:|:--------------:|:-----------:|:-----------:|:-----|
-| PROD-000123 | PROD-000045 | 100 | 1 | activo | 2024-01-01 | 2099-12-31 | Producto con factor de conversión 100:1 |
+| PROD-000123 | PROD-000045 | 100 | 1 | cambio_presentacion | 2024-01-01 | 2099-12-31 | Producto con factor de conversión 100:1 |
 
 Notas:
 
